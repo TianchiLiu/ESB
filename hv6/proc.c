@@ -20,8 +20,8 @@
 #include "proc.h"
 
 struct proc proc_table[NPROC] __aligned(PAGE_SIZE);
-struct esb esb_table[NPROC];/*new*/
-struct esb* current_esb; /*new*/
+struct tk5_esb esb_table[NPROC];/*new*/
+struct tk5_esb* current_esb; /*new*/
 pid_t current;
 
 int alloc_proc(pid_t pid, pn_t page_table_root, pn_t stack, pn_t hvm)

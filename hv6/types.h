@@ -5,7 +5,6 @@
 #include <uapi/errno.h>
 #include <uapi/pci.h>
 #include "param.h"
-#include <k5_esb.h>
 
 #define NULLPID 0
 #define INITPID 1
@@ -103,13 +102,7 @@ enum proc_state {
     PROC_STATE_FORCE_WIDTH = 0xfffffffffffffffful,
 };
 
-struct esb{
 
-    pid_t ipc_to;  /*replace the first parameter in send:send to which pid*/
-    pid_t ipc_from; /*which pid send,default is current in the hv6 OS*/
-    uint64_t val;   /*the value that current sends*/
-    tU2 service;
-};
 
 
 struct proc {
@@ -187,6 +180,11 @@ static inline size_t bytes_to_pages(size_t n)
 static inline bool is_pid_valid(pid_t pid)
 {
     return pid > 0 && pid < NPROC;
+}
+//add:verify service
+static inline bool is_service_valid(pid_t service) 
+{
+    return service > 0 && service < MAX_SVC;
 }
 
 static inline bool is_pn_valid(pn_t pn)

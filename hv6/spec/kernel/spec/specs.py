@@ -25,7 +25,8 @@ from helpers import (
         is_intremap_valid,
         is_pcipn_valid,
         is_pid_valid,
-        is_pn_valid,
+        is_pn_valid,  
+        is_service_valid,
 )
 
 
@@ -1128,26 +1129,21 @@ def sys_send(old, pid, val, pn, size, fd):
 
 send_proc = sys_send
 
-def sys_send2(old,pid,service,val):
+def sys_send2(old,pid,service,s_len):
     cond = z3.And(
         is_pid_valid(pid),
-        old.current < 500,
-        pid < 6000,
-        
+        is_service_valid(service),
+        #old.current < 500,
+        #pid < 6000,    
     )
-    assert 1<500,"old.current<500 failed!"
-    print("\n************specs.py")
-    print(old.current)
-    print("************\n")
     new = old.copy()
 
     new.esbs[pid].ipc_from=old.current
     new.esbs[pid].ipc_to=pid
-    new.esbs[pid].val=val
-    #new.esbs[pid].service=service  
+    new.esbs[pid].service=service  
 
-    new.procs[new.esbs[pid].ipc_to].ipc_from = old.current
-    new.procs[new.esbs[pid].ipc_to].ipc_val = val
+    # new.procs[new.esbs[pid].ipc_to].ipc_from = old.current
+    # new.procs[new.esbs[pid].ipc_to].ipc_val = val
 
     return cond,util.If(cond,new,old)
 

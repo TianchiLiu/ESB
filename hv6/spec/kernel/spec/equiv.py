@@ -120,6 +120,9 @@ def procs_equiv(conj, ctx, kernelstate):
 
     conj.append(ctx.globals['#iotlbinv'] == kernelstate.iotlbinv)
 
+#add:esbs_equiv
+def esbs_equiv(conj,ctx,kernelstate):
+    ipc_from = util.FreshBitVec('ipc_from', dt.pid_t)
 
 def pages_equiv(conj, ctx, kernelstate):
     pn = util.FreshBitVec('pn', dt.pn_t)
@@ -228,7 +231,6 @@ def intremaps_equiv(conj, ctx, kernelstate):
         util.global_field_element(ctx, '@intremap_table', 'vector', index) ==
         kernelstate.intremaps[index].vector)))
 
-
 def state_equiv(ctx, kernelstate):  #add:开始时，状态等价（main.HV6.setUp调用的)
     conj = []
 
@@ -249,7 +251,7 @@ def state_equiv(ctx, kernelstate):  #add:开始时，状态等价（main.HV6.set
     conj.append(kernelstate.file_table_ptr_to_int == util.global_ptr_to_int(ctx, '@file_table'))
     conj.append(kernelstate.devices_ptr_to_int == util.global_ptr_to_int(ctx, '@devices'))
     conj.append(kernelstate.dmapages_ptr_to_int == util.global_ptr_to_int(ctx, '@dmapages'))
-
+    
     conj.append(impl_invariants(ctx))
-
+    
     return z3.And(*conj)

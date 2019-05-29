@@ -3,10 +3,10 @@
 #include <hvm.h>
 #include "fd.h"
 #include "vm.h"
-
+#include "verify_esb.h"
 extern struct proc proc_table[NPROC];
-extern struct esb esb_table[NPROC];/*new*/
-extern struct esb* current_esb;   /*new*/
+extern struct tk5_esb esb_table[NPROC];/*new*/
+extern struct tk5_esb* current_esb;   /*new*/
 extern pid_t current;
 
 int alloc_proc(pid_t pid, pn_t page_table_root, pn_t stack, pn_t hvm);
@@ -31,7 +31,7 @@ static struct proc *get_proc(pid_t pid)
     return &proc_table[pid];
 }
 
-static struct esb *get_esb(esbid_t esbid)
+static struct tk5_esb *get_esb(esbid_t esbid)
 {
     //assert(is_pid_valid(pid), "pid must be valid");
     return &esb_table[esbid];

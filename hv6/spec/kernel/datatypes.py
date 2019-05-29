@@ -78,6 +78,8 @@ PCI_END = 0x100000000
 NPAGE = 8192
 NDMAPAGE = 512
 NPROC = 64
+#add service bound:MAX_SVC
+MAX_SVC = 189
 # NTSLICE
 NOFILE = 16
 NFILE = 128
@@ -122,7 +124,7 @@ INITPID = z3.BitVecVal(1, pid_t)
 
 MAX_INT64 = z3.BitVecVal(2 ** 64 - 1, 64)
 tU2=z3.BitVecSort(16)#add:service type
-
+tU4=z3.BitVecSort(32)#add:primitive type
 def FreshVA():
     idx1 = util.FreshBitVec('idx1', size_t)
     idx2 = util.FreshBitVec('idx2', size_t)
@@ -250,11 +252,12 @@ class Proc(Struct):
     intr = Map(pid_t, uint64_t, uint64_t)
 
     tlbinv = Map(pid_t, bool_t)
-
-class Esb(Struct):             #/*new*/
+#add:Esb struct
+class Esb(Struct):            
     ipc_from = Map(esbid_t, esbid_t)
     ipc_to = Map(esbid_t, esbid_t)
     service=Map(tU2,tU2)
+    primitive=Map(tU4,tU4)
     val=Map(esbid_t,uint64_t)
 
 class File(Struct):

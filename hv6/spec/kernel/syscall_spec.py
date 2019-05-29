@@ -183,7 +183,7 @@ class SyscallSpec(object):
 
     def sys_send2(self):
         pid = util.FreshBitVec('pid', dt.pid_t)
-        val = util.FreshBitVec('val', dt.uint64_t)
+        s_len = util.FreshBitVec('s_len', dt.tU4)
         service=util.FreshBitVec('service',dt.tU2)
         # pn = util.FreshBitVec('pn', dt.pn_t)
         # size = util.FreshBitVec('size', dt.size_t)
@@ -191,7 +191,7 @@ class SyscallSpec(object):
         #test = util.FreshBitVec('test', dt.test_t)
         #esbid = util.FreshBitVec('esbid', dt.esbid_t)
         # return (pid, val, pn, size, fd,test)
-        return (pid,service,val)
+        return (pid,service,s_len)
     k5_send = sys_send2
 
     def sys_recv(self):

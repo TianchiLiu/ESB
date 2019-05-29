@@ -44,37 +44,41 @@ int send_proc(pid_t pid, uint64_t val, pn_t pn, size_t size, int fd)
     return 0;
 }
 
-int k5_send(pid_t pid, tU2 service,uint64_t val)
+int k5_send(pid_t pid, tU2 service,tU4 s_len)
 {
     struct proc *sender, *receiver;
-    struct esb  *global_esb;
+    struct tk5_esb  *esb;
 
     if (!is_pid_valid(pid))
         return -ESRCH;
     
-    //if (!is_service_valid(service))
-    //    return -ERR_INIT;
+    if (!is_service_valid(service))
+       return -1;  
+    if (esb == NULL || pid == NULL)
+        return K5_NO_ACCESS;
     //assert(pid > 0 && pid < 128,"test");
     //assert(pid != current, "current is running and pid is sleeping");
-
-    assert(current<1000,"test");
-    assert(1>0,"aa");
-    global_esb=get_esb(pid);
+    // assert(current<1000,"test");
+    // assert(1>0,"aa");
     //assert(global_esb!=NULL,"global_esb is NULL");
-    global_esb->ipc_from=current;
-    global_esb->ipc_to=pid;
-    global_esb->val=val;
-    //global_esb->service=service;
+    esb=get_esb(pid);
+    //memset(esb, 0, sizeof(struct tk5_esb)); /*清零ESB帧结构,整页*/
+    
+    
+
+    esb->primitive = K5_SEND;
+    esb->src_port=current;
+    esb->dst_port=pid;
+    esb->service=service;
     // val=current_esb->val;
     // current=current_esb->ipc_from;
     // pid=current_esb->ipc_to;
 
-    receiver = get_proc(global_esb->ipc_to);
-    receiver->ipc_from=global_esb->ipc_from;
-    receiver->ipc_val=global_esb->val;
-    //receiver->service=global_esb->service;
-    // receiver->ipc_from = current;
-    // receiver->ipc_val = val;
+    // receiver = get_proc(global_esb->ipc_to);
+    // receiver->ipc_from=global_esb->ipc_from;
+    // receiver->ipc_val=global_esb->val;
+    
+
 
     return 0;
 }

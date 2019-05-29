@@ -178,8 +178,8 @@ typedef uint32_t pagecount_t;
 typedef uint32_t timer_t;
 typedef int64_t pid_t;
 typedef int64_t esbid_t;
-typedef int16_t tU2;
-
+// typedef int16_t tU2;
+// typedef int32_t tU4;
 
 #define TIMER_MAX UINT32_MAX
 

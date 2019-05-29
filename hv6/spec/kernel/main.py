@@ -411,9 +411,11 @@ class HV6Base(unittest.TestCase):
     __metaclass__ = HV6Meta
 
     def _prove(self, cond, pre=None, return_model=False, minimize=True):
-        #print "main.py.HV6Base._prove: entering..._prove: cond:{}".format(cond)
         if minimize:
             self.solver.push()
+        print "\n ×××××××××××××××"
+        print "\n cond:{}".format(cond)
+        print "\n ×××××××××××××××"
         self.solver.add(z3.Not(cond))
 
         res = self.solver.check()
@@ -443,7 +445,7 @@ class HV6Base(unittest.TestCase):
                     self.solver.push()
                     if isinstance(i, tuple):
                         self._prove(i[0], pre=i[1])
-                    else:
+                    else:   
                         self._prove(i)
                     self.solver.pop()
 
@@ -515,8 +517,9 @@ class HV6(HV6Base):
         self.solver = Solver()
         self.solver.set(AUTO_CONFIG=False)
 
-        self._pre_state = spec.state_equiv(self.ctx, self.state)  #add:setUp：（开始时），状态等价
-        print "\n_pre_state: {}".format(self._pre_state)
+        self._pre_state = spec.state_equiv(self.ctx, self.state)  #add:setUp：（开始时），状态等价,注意，只是加入了等价条件，并没有执行验证，验证是在状态转换后一起执行的
+        #print "\n_pre_state: {}".format(self._pre_state)
+
         self.ctx.add_assumption(spec.impl_invariants(self.ctx))
         self.solver.add(self._pre_state)
 
@@ -539,13 +542,18 @@ class HV6(HV6Base):
         s.procs[s.current].killed = z3.BoolVal(True)
         newstate = spec.switch_proc(s, pid)[1]
         self._prove(z3.Exists([pid], spec.state_equiv(self.ctx, newstate)))
-
+    #疑问：？res和cond在哪儿进行的求解
     def _syscall_generic(self, name):
-        args = syscall_spec.get_syscall_args(name)
-        print "main.py._syscall_generic:args: {}".format(args)
-        res = self.ctx.call('@' + name, *args)
-        cond, newstate = getattr(spec, name)(self.state, *args)
-        model = self._prove(z3.And(spec.state_equiv(self.ctx, newstate),
+        args = syscall_spec.get_syscall_args(name) 
+        res = self.ctx.call('@' + name, *args)  #ctx(impl)变换(res为smt)  执行hv6中的self.globals[fn](self, *args)，重点是执行branch函数进行符号执行（本质是执行c语句）（（没有调用的情况下执行语句））（（（执行过程中会检查是否满足spec的条件）））
+        print "\n×××××××××××"
+        print "res:{}".format(res)
+        print "\n×××××××××××"
+        cond, newstate = getattr(spec, name)(self.state, *args)  #内核状态变换(cond为smt)
+        print "\n×××××××××××"
+        print "cond:{}".format(cond.type)
+        print "\n×××××××××××"
+        model = self._prove(z3.And(spec.state_equiv(self.ctx, newstate),  #impl和spec分别执行后，状态是否等价
                                    cond == (res == util.i32(0))),
                             pre=z3.And(self._pre_state, z3.BoolVal(True)),
                             return_model=INTERACTIVE)

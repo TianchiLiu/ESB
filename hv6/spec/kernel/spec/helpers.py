@@ -19,7 +19,7 @@ from libirpy import util
 import hv6py.kernel.spec.datatypes as dt
 
 
-__all__ = ['is_pid_bounded', 'is_pid_valid', 'is_pn_valid', 'is_dmapn_valid',
+__all__ = ['is_pid_bounded', 'is_pid_valid', 'is_service_valid','is_pn_valid', 'is_dmapn_valid',
            'is_fn_valid', 'is_fd_valid', 'is_pcipn_valid', 'is_page_table_type',
            'is_iommu_page_table_type', 'is_status_live', 'is_va_valid',
            'get_sub_type', 'get_iommu_sub_type', 'pn_has_owner_and_type',
@@ -32,7 +32,9 @@ def is_pid_bounded(pid):
 
 def is_pid_valid(pid):
     return z3.And(pid > 0, pid < dt.NPROC)
-
+#add:is_service_valid
+def is_service_valid(service):
+    return z3.And(service > 0, service < dt.MAX_SVC)
 
 def is_pn_valid(pn):
     return z3.ULT(pn, dt.NPAGE)

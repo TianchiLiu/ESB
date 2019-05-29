@@ -80,7 +80,8 @@ class Solver(object):
         return sutils.read_cmd(self._proc.stdout)
 
     def add(self, term):
-        #print "\nsolver.py************ term:{}".format(term)
+        # import pdb
+        # pdb.set_trace()
         term = to_smt2(term)
         return self._call('add', term)
 
