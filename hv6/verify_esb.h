@@ -87,9 +87,49 @@ typedef double tF8; //8字节浮点数
 
 struct tk5_esb{
 
+	tU4 head : 3; //帧头扩展长度，0~7：扩展的8字节长字个数;
+	tU4 page : 1; //长度按页计数，0:按8字节，1:按4KB页面计
+	tU4 size : 12; //帧总长度，以8字节或4KB页面为单位计数;
     pid_t src_port;  /*replace the first parameter in send:send to which pid*/
     pid_t dst_port; /*which pid send,default is current in the hv6 OS*/
-    uint64_t val;   /*the value that current sends*/
-    tU4 primitive;
     tU2 service;
-};
+    tU4 primitive : 2;
+    uint64_t val;   /*the value that current sends*/
+
+};  
+
+/*事件服务总线头部扩展结构：eh1, 仅扩展8字节（推荐）*/
+typedef struct {
+	tU2 snd_seq; //发送帧序列号,与IPv4兼容；
+	tU2 ack_seq; //确认或否认收到的帧序列号，或错误码；
+	tU4 hops : 8; //网络路由跳数，与IPv4和IPv6兼容；
+	tU4 qos : 8; //服务质量标识，与IPv4和IPv6兼容；
+	tU4 protocol : 8; //上层协议标识，与IPv4和IPv6兼容；
+	tU4 endian : 1; //端点标识，0:小端点,1:大端点;仅用于网络;
+	tU4 spare : 7; //留作扩展;
+} tK5_eh1; //ESB帧头扩展结构，用于cast映射body[1];
+
+/*事件服务总线头部网络地址扩展：ehn，仅地址8字节（推荐）*/
+typedef struct {
+	tU4 dst_addr; //接收侧目的网络地址;
+	tU4 src_addr; //发送侧源端网络地址;
+} tK5_ehn; //扩展网络地址，用于cast映射body[2~7];
+
+
+/**
+ * -----------------------------------------------------------------
+ * 服务原语相关参数描述，建议本次测试以此为基础。
+ *------------------------------------------------------------------
+ */
+#define K5_MAX_NET_LEVEL 6 //最大网络级数
+#define K5_MAX_NET_NAME 64 //最大网络名称字符数
+/*事件服务总线网络地址描述 net*/
+typedef struct {
+	tU1 net_level; //网络级数，1为本处理器，直到7，共6级；
+	tU1 cvt_level; //已将名称转换为二进制的网络级数（按位）
+	tU4 name_len; //网络名称字符串总长度
+	tU4 dst_port; //目的端口号，可为：pid、fd、sock；
+	tU4 src_port; //源侧端口号，可为：pid、fd、sock；
+	tK5_ehn hn[K5_MAX_NET_LEVEL]; //ESB头部网络地址扩展结构，6*8字节
+	tU1 net_name[K5_MAX_NET_NAME]; //字符串描述的网络名称，首次输入
+} tK5_net; //ESB网络地址描述

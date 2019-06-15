@@ -46,7 +46,7 @@ int send_proc(pid_t pid, uint64_t val, pn_t pn, size_t size, int fd)
 
 int k5_send(pid_t pid, tU2 service,tU4 s_len)
 {
-    struct proc *sender, *receiver;
+    //struct proc *sender, *receiver;
     struct tk5_esb  *esb;
 
     if (!is_pid_valid(pid))
@@ -54,8 +54,9 @@ int k5_send(pid_t pid, tU2 service,tU4 s_len)
     
     if (!is_service_valid(service))
        return -1;  
-    if (esb == NULL || pid == NULL)
+    if (esb == NULL)
         return K5_NO_ACCESS;
+    //assert(esb!=NULL,);
     //assert(pid > 0 && pid < 128,"test");
     //assert(pid != current, "current is running and pid is sleeping");
     // assert(current<1000,"test");
@@ -79,6 +80,62 @@ int k5_send(pid_t pid, tU2 service,tU4 s_len)
     // receiver->ipc_val=global_esb->val;
     
 
+
+    return 0;
+}
+
+//add:k5_reply
+int k5_reply(pid_t pid,tI2 ack_err,tU4 s_len){
+    struct tk5_esb  *esb;
+
+    if (!is_pid_valid(pid))
+        return -ESRCH;
+
+    if (esb == NULL)
+        return K5_NO_ACCESS;
+
+    esb=get_esb(pid);
+    esb->primitive = K5_REPLY; /*设置服务原语*/
+    esb->head = K5_H1; /*设置扩展头部H1*/
+    return 0;
+}
+
+//add:k5_wait
+int k5_wait(pid_t pid,tU4 w_len){
+    struct tk5_esb  *esb;
+
+    if (!is_pid_valid(pid))
+        return -ESRCH;
+
+    if (esb == NULL)
+        return K5_NO_ACCESS;
+
+    esb=get_esb(pid);
+    esb->primitive = K5_WAIT; /*设置服务原语*/
+    esb->src_port=pid;
+    esb->dst_port=current;
+
+    return 0;
+}
+
+//add:k5_call
+int k5_call(pid_t pid,tU2 service,tU4 c_len){
+    struct tk5_esb  *esb;
+
+    if (!is_pid_valid(pid))
+        return -ESRCH;
+    
+    if (!is_service_valid(service))
+       return -1;  
+    if (esb == NULL)
+        return K5_NO_ACCESS;
+
+    esb=get_esb(pid);
+
+    esb->primitive = K5_CALL;
+    esb->src_port=current;
+    esb->dst_port=pid;
+    esb->service=service;
 
     return 0;
 }

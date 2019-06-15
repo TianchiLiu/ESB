@@ -194,6 +194,25 @@ class SyscallSpec(object):
         return (pid,service,s_len)
     k5_send = sys_send2
 
+    def k5_reply(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        ack_err = util.FreshBitVec('ack_err', dt.tI2)
+        s_len = util.FreshBitVec('s_len', dt.tU4)
+        return (pid,ack_err,s_len)
+
+    def k5_wait(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        w_len = util.FreshBitVec('s_len', dt.tU4)
+
+        return (pid,w_len)
+
+    def k5_call(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        service=util.FreshBitVec('service',dt.tU2)
+        c_len = util.FreshBitVec('c_len', dt.tU4)
+
+        return (pid,service,c_len)
+
     def sys_recv(self):
         pid = util.FreshBitVec('pid', dt.pid_t)
         pn = util.FreshBitVec('pn', dt.pn_t)

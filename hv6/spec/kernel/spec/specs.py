@@ -1119,11 +1119,9 @@ def sys_send(old, pid, val, pn, size, fd):
     new2.files[fn].refcnt[(pid, fd)] += 1
 
     new3 = util.If(cond2, new2, new)
-
     new3.procs[pid].state = dt.proc_state.PROC_RUNNING
     new3.procs[old.current].state = dt.proc_state.PROC_RUNNABLE
     new3.current = pid
-
     return cond, util.If(cond, new3, old)
 
 
@@ -1137,9 +1135,9 @@ def sys_send2(old,pid,service,s_len):
         #pid < 6000,    
     )
     new = old.copy()
-
-    new.esbs[pid].ipc_from=old.current
-    new.esbs[pid].ipc_to=pid
+    new.esbs[pid].primitive=dt.K5_SEND
+    new.esbs[pid].src_port=old.current
+    new.esbs[pid].dst_port=pid
     new.esbs[pid].service=service  
 
     # new.procs[new.esbs[pid].ipc_to].ipc_from = old.current
@@ -1148,6 +1146,39 @@ def sys_send2(old,pid,service,s_len):
     return cond,util.If(cond,new,old)
 
 k5_send = sys_send2
+
+def k5_reply(old,pid,ack_err,s_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+
+    )
+    new = old.copy()
+    new.esbs[pid].primitive=dt.K5_REPLY
+    new.esbs[pid].src_port=old.current
+    new.esbs[pid].dst_port=pid
+    #new.esbs[pid].head
+    return cond,util.If(cond,new,old)
+
+def k5_wait(old,pid,w_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+    )
+    new = old.copy()
+    new.esbs[pid].primitive=dt.K5_WAIT
+    new.esbs[pid].src_port=pid
+    new.esbs[pid].dst_port=old.current
+    return cond,util.If(cond,new,old)
+
+def k5_call(old,pid,service,c_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+        is_service_valid(service),
+    )
+    new = old.copy()
+    new.esbs[pid].primitive=dt.K5_CALL
+    new.esbs[pid].src_port=old.current
+    new.esbs[pid].dst_port=pid
+    return cond,util.If(cond,new,old)
 
 def sys_recv(old, pid, pn, fd):
     cond = z3.And(

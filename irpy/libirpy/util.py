@@ -401,6 +401,8 @@ def simplify(expression):
 
 
 def global_ptr_to_int(ctx, name):
+    # import pdb
+    # pdb.set_trace()
     pointer = ctx.globals[name]
     return ctx.ptr_to_int[pointer._ref._name]
 

@@ -1,4 +1,4 @@
-#
+# -*- coding: utf-8 -*-
 # Copyright 2017 Hyperkernel Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,6 +125,14 @@ INITPID = z3.BitVecVal(1, pid_t)
 MAX_INT64 = z3.BitVecVal(2 ** 64 - 1, 64)
 tU2=z3.BitVecSort(16)#add:service type
 tU4=z3.BitVecSort(32)#add:primitive type
+tUTwo = z3.BitVecSort(2)
+tI2 = z3.BitVecSort(16) #ack_err type (k5_reply)
+#add: 服务原语primitive代码定义（2比特）
+K5_CALL = 0 #服务原语：00：同步请求调用；
+K5_REPLY = 1 #服务原语：01：异步应答；
+K5_SEND = 2 #服务原语：10：异步发送；
+K5_WAIT = 3 #服务原语：11：同步等待接收；
+
 def FreshVA():
     idx1 = util.FreshBitVec('idx1', size_t)
     idx2 = util.FreshBitVec('idx2', size_t)
@@ -253,9 +261,10 @@ class Proc(Struct):
 
     tlbinv = Map(pid_t, bool_t)
 #add:Esb struct
-class Esb(Struct):            
-    ipc_from = Map(esbid_t, esbid_t)
-    ipc_to = Map(esbid_t, esbid_t)
+class Esb(Struct):   
+
+    src_port = Map(esbid_t, esbid_t)
+    dst_port = Map(esbid_t, esbid_t)
     service=Map(tU2,tU2)
     primitive=Map(tU4,tU4)
     val=Map(esbid_t,uint64_t)
