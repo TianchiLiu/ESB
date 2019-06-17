@@ -110,10 +110,10 @@ typedef struct {
 } tK5_eh1; //ESB帧头扩展结构，用于cast映射body[1];
 
 /*事件服务总线头部网络地址扩展：ehn，仅地址8字节（推荐）*/
-typedef struct {
+struct tk5_ehn{
 	tU4 dst_addr; //接收侧目的网络地址;
 	tU4 src_addr; //发送侧源端网络地址;
-} tK5_ehn; //扩展网络地址，用于cast映射body[2~7];
+} ; //扩展网络地址，用于cast映射body[2~7];
 
 
 /**
@@ -124,12 +124,12 @@ typedef struct {
 #define K5_MAX_NET_LEVEL 6 //最大网络级数
 #define K5_MAX_NET_NAME 64 //最大网络名称字符数
 /*事件服务总线网络地址描述 net*/
-typedef struct {
+struct tk5_net{
 	tU1 net_level; //网络级数，1为本处理器，直到7，共6级；
 	tU1 cvt_level; //已将名称转换为二进制的网络级数（按位）
 	tU4 name_len; //网络名称字符串总长度
 	tU4 dst_port; //目的端口号，可为：pid、fd、sock；
 	tU4 src_port; //源侧端口号，可为：pid、fd、sock；
-	tK5_ehn hn[K5_MAX_NET_LEVEL]; //ESB头部网络地址扩展结构，6*8字节
+	//struct tk5_ehn hn[K5_MAX_NET_LEVEL]; //ESB头部网络地址扩展结构，6*8字节
 	tU1 net_name[K5_MAX_NET_NAME]; //字符串描述的网络名称，首次输入
-} tK5_net; //ESB网络地址描述
+}; //ESB网络地址描述

@@ -123,6 +123,7 @@ physaddr_t = uintptr_t
 INITPID = z3.BitVecVal(1, pid_t)
 
 MAX_INT64 = z3.BitVecVal(2 ** 64 - 1, 64)
+tU1=z3.BitVecSort(8)
 tU2=z3.BitVecSort(16)#add:service type
 tU4=z3.BitVecSort(32)#add:primitive type
 tUTwo = z3.BitVecSort(2)
@@ -268,7 +269,14 @@ class Esb(Struct):
     service=Map(tU2,tU2)
     primitive=Map(tU4,tU4)
     val=Map(esbid_t,uint64_t)
-
+class tk5_net(Struct):
+    """docstring for tk5_net"""
+    net_level=Map(tU1,tU1)
+    cvt_level=Map(tU1,tU1)
+    name_len=Map(tU4,tU4)
+    dst_port=Map(tU4,tU4)
+    src_port=Map(tU4,tU4)
+        
 class File(Struct):
     type = Map(fn_t, file_type_t)
     refcnt = Refcnt2(fn_t, (pid_t, fd_t), size_t)
@@ -292,6 +300,7 @@ class KernelState(BaseStruct):
 
     procs = Proc()
     esbs=Esb()
+    to=tk5_net()
     pages = Page()
     dmapages = DMAPage()
     files = File()

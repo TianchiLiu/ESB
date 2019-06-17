@@ -121,7 +121,6 @@ int k5_wait(pid_t pid,tU4 w_len){
 //add:k5_call
 int k5_call(pid_t pid,tU2 service,tU4 c_len){
     struct tk5_esb  *esb;
-
     if (!is_pid_valid(pid))
         return -ESRCH;
     
@@ -131,10 +130,11 @@ int k5_call(pid_t pid,tU2 service,tU4 c_len){
         return K5_NO_ACCESS;
 
     esb=get_esb(pid);
-
+    tU4 src_port=to->src_port;
+    tU4 dst_port=to->dst_port;
     esb->primitive = K5_CALL;
-    esb->src_port=current;
-    esb->dst_port=pid;
+    esb->src_port=src_port;
+    esb->dst_port=dst_port;
     esb->service=service;
 
     return 0;

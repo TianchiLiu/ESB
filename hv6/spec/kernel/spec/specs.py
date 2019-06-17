@@ -1175,9 +1175,10 @@ def k5_call(old,pid,service,c_len):
         is_service_valid(service),
     )
     new = old.copy()
-    new.esbs[pid].primitive=dt.K5_CALL
-    new.esbs[pid].src_port=old.current
-    new.esbs[pid].dst_port=pid
+    #new.esbs[pid].primitive=dt.K5_CALL
+
+    new.esbs[pid].src_port=old.to.src_port
+    new.esbs[pid].dst_port=old.to.dst_port
     return cond,util.If(cond,new,old)
 
 def sys_recv(old, pid, pn, fd):

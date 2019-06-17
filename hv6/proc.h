@@ -8,7 +8,7 @@ extern struct proc proc_table[NPROC];
 extern struct tk5_esb esb_table[NPROC];/*new*/
 extern struct tk5_esb* current_esb;   /*new*/
 extern pid_t current;
-
+extern struct tk5_net* to;
 int alloc_proc(pid_t pid, pn_t page_table_root, pn_t stack, pn_t hvm);
 noreturn void run_current(void);
 
