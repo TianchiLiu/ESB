@@ -128,7 +128,17 @@ tU2=z3.BitVecSort(16)#add:service type
 tU4=z3.BitVecSort(32)#add:primitive type
 tUTwo = z3.BitVecSort(2)
 tI2 = z3.BitVecSort(16) #ack_err type (k5_reply)
-#add: 服务原语primitive代码定义（2比特）
+
+#事件服务总线帧头类型和6级网络定义（3比特）
+K5_H0 = 1 #0型帧，头部2个八字节；
+K5_H1 = 2  #1型帧，头部3个八字节；
+K5_N1 = 3  #1级网，头部4个八字节；
+K5_N2 = 4  #2级网，头部5个八字节；
+K5_N3 = 5  #3级网，头部6个八字节；
+K5_N4 = 6  #4级网，头部7个八字节；
+K5_N5 = 7  #5级网，头部8个八字节；
+K5_N6 = 8  #6级网，头部9个八字节；
+
 K5_CALL = 0 #服务原语：00：同步请求调用；
 K5_REPLY = 1 #服务原语：01：异步应答；
 K5_SEND = 2 #服务原语：10：异步发送；
@@ -263,7 +273,7 @@ class Proc(Struct):
     tlbinv = Map(pid_t, bool_t)
 #add:Esb struct
 class Esb(Struct):   
-
+    head = Map(tU4,tU4)
     src_port = Map(esbid_t, esbid_t)
     dst_port = Map(esbid_t, esbid_t)
     service=Map(tU2,tU2)
@@ -311,6 +321,8 @@ class KernelState(BaseStruct):
     intremaps = Intremap()
 
     current = Map(pid_t)
+    current_esb=Esb()
+    #s_buf = Map(tU4)
     iotlbinv = Map(bool_t)
 
     def flush_iotlb(self):

@@ -39,8 +39,6 @@ class BaseZ3IRPyEval(BaseIRPyEvaluator):
         assert cond, msg
 
     def get_poison(self, type):
-        import pdb
-        pdb.set_trace()
         if type.is_int():
             if type.size() == 1:
                 return util.FreshBool('poison')
@@ -110,8 +108,6 @@ class BaseZ3IRPyEval(BaseIRPyEvaluator):
     # Logical Ops
     #############################
     def shl(self, ctx, return_type, a, atype, b, btype, nuw=False, nsw=False):
-        import pdb
-        pdb.set_trace()
         assert atype == return_type
         assert atype == btype
         assert not nuw and not nsw
@@ -325,6 +321,7 @@ class Z3IRPyEval(BaseZ3IRPyEval):
 
     def declare_global_constant(self, ctx, name, global_type, value=None, value_type=None):
         ctx['globals'][name] = dt.fresh_ptr(ctx, name, global_type)
+
         if value_type.is_array() and value_type.deref().is_int():
             inner_size = value_type.deref().size()
             for n, i in enumerate(util.parse_constant_array(value)):
@@ -449,8 +446,7 @@ class Z3IRPyEval(BaseZ3IRPyEval):
         return self.branch(ctx, value == case_value, itypes.IntType(1), case_branch, rest)
 
     def undef(self, ctx, type):
-        import pdb
-        pdb.set_trace()
+        
         return self.get_poison(type)
 
     def unreachable(self, ctx, *args, **kwargs):

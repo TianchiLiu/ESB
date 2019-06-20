@@ -95,11 +95,11 @@ struct tk5_esb{
     tU2 service;
     tU4 primitive : 2;
     uint64_t val;   /*the value that current sends*/
-
+    tU8 body[K5_MAX_BODY]; //帧体，扩展头部及所带数据，8字节数组；
 };  
 
 /*事件服务总线头部扩展结构：eh1, 仅扩展8字节（推荐）*/
-typedef struct {
+struct tk5_eh1{
 	tU2 snd_seq; //发送帧序列号,与IPv4兼容；
 	tU2 ack_seq; //确认或否认收到的帧序列号，或错误码；
 	tU4 hops : 8; //网络路由跳数，与IPv4和IPv6兼容；
@@ -107,7 +107,7 @@ typedef struct {
 	tU4 protocol : 8; //上层协议标识，与IPv4和IPv6兼容；
 	tU4 endian : 1; //端点标识，0:小端点,1:大端点;仅用于网络;
 	tU4 spare : 7; //留作扩展;
-} tK5_eh1; //ESB帧头扩展结构，用于cast映射body[1];
+}; //ESB帧头扩展结构，用于cast映射body[1];
 
 /*事件服务总线头部网络地址扩展：ehn，仅地址8字节（推荐）*/
 struct tk5_ehn{
@@ -130,6 +130,9 @@ struct tk5_net{
 	tU4 name_len; //网络名称字符串总长度
 	tU4 dst_port; //目的端口号，可为：pid、fd、sock；
 	tU4 src_port; //源侧端口号，可为：pid、fd、sock；
+	//应该写16个，不影响验证的情况下，为了方便，先写2个
+	tU4 dst_addr; //接收侧目的网络地址;
+	tU4 src_addr; //发送侧源端网络地址;
 	//struct tk5_ehn hn[K5_MAX_NET_LEVEL]; //ESB头部网络地址扩展结构，6*8字节
-	tU1 net_name[K5_MAX_NET_NAME]; //字符串描述的网络名称，首次输入
+	//tU1 net_name[K5_MAX_NET_NAME]; //字符串描述的网络名称，首次输入
 }; //ESB网络地址描述

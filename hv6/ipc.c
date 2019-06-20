@@ -46,31 +46,64 @@ int send_proc(pid_t pid, uint64_t val, pn_t pn, size_t size, int fd)
 
 int k5_send(pid_t pid, tU2 service,tU4 s_len)
 {
+    struct tk5_net *to=to;
     //struct proc *sender, *receiver;
-    struct tk5_esb  *esb;
+    struct tk5_esb *current_esb=get_esb(pid);
+
+    struct tk5_ehn* ehn; /*ESB扩展网络地址，8字节*/
+    tU1 i, j; /*循环临时变量*/
 
     if (!is_pid_valid(pid))
         return -ESRCH;
     
     if (!is_service_valid(service))
        return -1;  
-    if (esb == NULL)
-        return K5_NO_ACCESS;
+    //if (current_esb == NULL)
+    //    return K5_NO_ACCESS;
     //assert(esb!=NULL,);
+    //current_esb=NULL;
+    if (to->net_level >= K5_H1) {
+    }/*设置扩展头body[0],已清零*/
+
+    if (to->net_level >= K5_N1 && to->net_level <= K5_N6) {
+        for (i = 0, j = 0; i < 6; i++, j++) {
+            ehn->dst_addr = to->dst_addr; /*第i级网络目的地址*/
+            ehn->src_addr = to->src_addr; /*第i级网络源地址*/
+            current_esb->body[j] = (tU8)ehn;   //error trans
+            //memcpy(&esb->body[j], &ehn,
+            //       sizeof(tU8)); /*cast映射到body[j]*/
+        }
+    }
+
+    if (s_len > 0) /*若有数据要发送,拷贝到ESB*/
+    {
+            tU4 head=current_esb->head;
+            tU4 temp=head;
+            memcpy(body+head, s_buf+temp, s_len);
+            //memcpy(current_esb->body[head],body+head,s_len);
+            //current_esb->body[current_esb->head] = *s_buf;
+            current_esb->size = (current_esb->head + 1) * 8 + s_len; /*帧总长=头长+体长*/
+
+        
+         
+        
+    }
     //assert(pid > 0 && pid < 128,"test");
     //assert(pid != current, "current is running and pid is sleeping");
     // assert(current<1000,"test");
     // assert(1>0,"aa");
     //assert(global_esb!=NULL,"global_esb is NULL");
-    esb=get_esb(pid);
+    //  esb=current_esb;
     //memset(esb, 0, sizeof(struct tk5_esb)); /*清零ESB帧结构,整页*/
     
     
 
-    esb->primitive = K5_SEND;
-    esb->src_port=current;
-    esb->dst_port=pid;
-    esb->service=service;
+    current_esb->primitive = K5_SEND;
+    current_esb->service=service;
+    current_esb->head=to->net_level;
+    current_esb->src_port=to->src_port;
+    current_esb->dst_port=to->dst_port;
+    
     // val=current_esb->val;
     // current=current_esb->ipc_from;
     // pid=current_esb->ipc_to;
@@ -120,21 +153,27 @@ int k5_wait(pid_t pid,tU4 w_len){
 
 //add:k5_call
 int k5_call(pid_t pid,tU2 service,tU4 c_len){
-    struct tk5_esb  *esb;
+    struct tk5_net *to=to;
+    
+    
     if (!is_pid_valid(pid))
         return -ESRCH;
     
     if (!is_service_valid(service))
        return -1;  
-    if (esb == NULL)
-        return K5_NO_ACCESS;
-
+    struct tk5_esb *esb;
     esb=get_esb(pid);
-    tU4 src_port=to->src_port;
-    tU4 dst_port=to->dst_port;
+    //if ((esb) == NULL)
+    //    return K5_NO_ACCESS;
+    
+    //esb=get_esb(pid);
     esb->primitive = K5_CALL;
-    esb->src_port=src_port;
-    esb->dst_port=dst_port;
+
+    //tU4 src_port=to->src_port;
+    //tU4 dst_port=to->dst_port;
+    esb->src_port=to->src_port;
+    esb->dst_port=to->dst_port;
+
     esb->service=service;
 
     return 0;

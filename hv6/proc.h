@@ -9,6 +9,9 @@ extern struct tk5_esb esb_table[NPROC];/*new*/
 extern struct tk5_esb* current_esb;   /*new*/
 extern pid_t current;
 extern struct tk5_net* to;
+extern tU4 s_buf[K5_MAX_BODY][1];
+extern tU4 body[K5_MAX_BODY][1];
+
 int alloc_proc(pid_t pid, pn_t page_table_root, pn_t stack, pn_t hvm);
 noreturn void run_current(void);
 

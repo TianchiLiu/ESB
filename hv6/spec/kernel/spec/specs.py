@@ -1136,9 +1136,11 @@ def sys_send2(old,pid,service,s_len):
     )
     new = old.copy()
     new.esbs[pid].primitive=dt.K5_SEND
+    new.esbs[pid].service=service 
+    new.esbs[pid].head=old.to.net_level
     new.esbs[pid].src_port=old.current
     new.esbs[pid].dst_port=pid
-    new.esbs[pid].service=service  
+     
 
     # new.procs[new.esbs[pid].ipc_to].ipc_from = old.current
     # new.procs[new.esbs[pid].ipc_to].ipc_val = val
