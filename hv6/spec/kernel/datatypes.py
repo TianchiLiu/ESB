@@ -271,6 +271,19 @@ class Proc(Struct):
     intr = Map(pid_t, uint64_t, uint64_t)
 
     tlbinv = Map(pid_t, bool_t)
+
+class tk5_net(Struct):
+    """docstring for tk5_net"""
+    net_level=Map(tU1,tU1)
+    cvt_level=Map(tU1,tU1)
+    name_len=Map(tU4,tU4)
+    dst_port=Map(tU4,tU4)
+    src_port=Map(tU4,tU4)
+class s_buf(Struct):
+    """docstring for s_buf"""
+    value = Map(tU4,tU4)
+class body(Struct):
+    value = Map(tU4,tU4)      
 #add:Esb struct
 class Esb(Struct):   
     head = Map(tU4,tU4)
@@ -279,14 +292,8 @@ class Esb(Struct):
     service=Map(tU2,tU2)
     primitive=Map(tU4,tU4)
     val=Map(esbid_t,uint64_t)
-class tk5_net(Struct):
-    """docstring for tk5_net"""
-    net_level=Map(tU1,tU1)
-    cvt_level=Map(tU1,tU1)
-    name_len=Map(tU4,tU4)
-    dst_port=Map(tU4,tU4)
-    src_port=Map(tU4,tU4)
-        
+    bodys = body()
+
 class File(Struct):
     type = Map(fn_t, file_type_t)
     refcnt = Refcnt2(fn_t, (pid_t, fd_t), size_t)
@@ -311,6 +318,7 @@ class KernelState(BaseStruct):
     procs = Proc()
     esbs=Esb()
     to=tk5_net()
+    s_bufs = s_buf()
     pages = Page()
     dmapages = DMAPage()
     files = File()

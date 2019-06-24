@@ -78,8 +78,7 @@ int k5_send(pid_t pid, tU2 service,tU4 s_len)
     if (s_len > 0) /*若有数据要发送,拷贝到ESB*/
     {
             tU4 head=current_esb->head;
-            tU4 temp=head;
-            memcpy(body+head, s_buf+temp, s_len);
+            memcpy(body+head, s_buf+head, s_len);
             //memcpy(current_esb->body[head],body+head,s_len);
             //current_esb->body[current_esb->head] = *s_buf;
             current_esb->size = (current_esb->head + 1) * 8 + s_len; /*帧总长=头长+体长*/
