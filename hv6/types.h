@@ -187,6 +187,11 @@ static inline bool is_service_valid(pid_t service)
     return service > 0 && service < MAX_SVC;
 }
 
+static inline bool is_s_len_valid(pid_t s_len) 
+{
+    return s_len > 0;
+}
+
 static inline bool is_pn_valid(pn_t pn)
 {
     return pn < NPAGE;

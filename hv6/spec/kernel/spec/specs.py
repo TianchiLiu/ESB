@@ -27,6 +27,7 @@ from helpers import (
         is_pid_valid,
         is_pn_valid,  
         is_service_valid,
+        is_s_len_valid,
 )
 
 
@@ -1131,9 +1132,13 @@ def sys_send2(old,pid,service,s_len):
     cond = z3.And(
         is_pid_valid(pid),
         is_service_valid(service),
+        #old.to.net_level >= dt.K5_N1,
+        #old.to.net_level <= dt.K5_N6,
+        is_s_len_valid(s_len),
         #old.current < 500,
         #pid < 6000,    
     )
+    #assert old.to.net_level<dt.K5_N1
     new = old.copy()
     new.esbs[pid].primitive=dt.K5_SEND
     new.esbs[pid].service=service 

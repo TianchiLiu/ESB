@@ -57,13 +57,15 @@ int k5_send(pid_t pid, tU2 service,tU4 s_len)
         return -ESRCH;
     
     if (!is_service_valid(service))
-       return -1;  
+       return -1; 
+    if(!is_s_len_valid(s_len))
+        return -1; 
+
     //if (current_esb == NULL)
     //    return K5_NO_ACCESS;
     //assert(esb!=NULL,);
     //current_esb=NULL;
-    if (to->net_level >= K5_H1) {
-    }/*设置扩展头body[0],已清零*/
+    /*设置扩展头body[0],已清零*/
 
     if (to->net_level >= K5_N1 && to->net_level <= K5_N6) {
         for (i = 0, j = 0; i < 6; i++, j++) {
@@ -75,7 +77,7 @@ int k5_send(pid_t pid, tU2 service,tU4 s_len)
         }
     }
 
-    if (s_len > 0) /*若有数据要发送,拷贝到ESB*/
+    if (is_s_len_valid(s_len)) /*若有数据要发送,拷贝到ESB*/
     {
             tU4 head=current_esb->head;
             memcpy(body+head, s_buf+head, s_len);
