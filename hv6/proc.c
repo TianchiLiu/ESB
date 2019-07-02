@@ -23,10 +23,14 @@ struct proc proc_table[NPROC] __aligned(PAGE_SIZE);
 struct tk5_esb esb_table[NPROC];/*new*/
 struct tk5_esb* current_esb; /*new*/
 struct tk5_net* to;  /*new*/
+struct tk5_net* from;  /*new*/
+struct tk5_svc *_svc;
 pid_t current;
 
 
 tU4 s_buf[K5_MAX_BODY][1];
+tU4 w_buf[K5_MAX_BODY][1];
+tU4 c_buf[K5_MAX_BODY][1];
 tU4 body[K5_MAX_BODY][1];
 
 int alloc_proc(pid_t pid, pn_t page_table_root, pn_t stack, pn_t hvm)

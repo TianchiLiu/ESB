@@ -238,7 +238,7 @@ def state_equiv(ctx, kernelstate):  #add:开始时，状态等价（main.HV6.set
     for k in kernelstate._meta.keys():
         if not k in kernelstate._structs:
             continue
-        if k=='esbs'or k=='to' or 'current_esb':       #/*new* jump the equiv verify of esbs/ 
+        if k=='esbs'or k=='to' or k=='from_' or k=='ehn'  or k=='s_bufs' or k=='current_esb':       #/*new* jump the equiv verify of esbs/ 
             continue        #/*new*/ 
         getattr(module, k + '_equiv')(conj, ctx, kernelstate)
 

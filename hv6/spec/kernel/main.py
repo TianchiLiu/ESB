@@ -95,6 +95,10 @@ _syscalls = [
     "k5_reply",
     "k5_wait",
     "k5_call",
+    "kk_send", # sys_send2
+    "kk_reply",
+    "kk_wait",
+    "kk_call",
     
 ]
 

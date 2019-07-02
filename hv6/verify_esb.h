@@ -135,4 +135,15 @@ struct tk5_net{
 	tU4 src_addr; //发送侧源端网络地址;
 	//struct tk5_ehn hn[K5_MAX_NET_LEVEL]; //ESB头部网络地址扩展结构，6*8字节
 	//tU1 net_name[K5_MAX_NET_NAME]; //字符串描述的网络名称，首次输入
-}; //ESB网络地址描述
+}; //ESB网络地址描述  
+
+/*服务编码展开结构：svc, 仅14比特；（可选）*/
+struct tk5_svc{
+	tU4 svc_func : 4; //服务功能：每类服务可有16个功能，需优化；
+	tU4 svc_type : 4; //服务类型：目前定义11类，需优化；
+	tU4 svc_pnum : 3; //服务参数个数： 在服务向量中定义；
+	tU4 svc_inout : 1; //服务参数方向：0输入、1输出；2018-10-03增加；
+	tU4 svc_space : 2; //服务领域空间：0系统、1及以上用户；
+	tU4 primitive : 2; //服务原语，0:请求，1:确认，2:否认，3：等待
+	tU4 spare : 16; //备用
+} ; //服务码展开，服务原语用；

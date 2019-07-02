@@ -1138,8 +1138,21 @@ def sys_send2(old,pid,service,s_len):
         #old.current < 500,
         #pid < 6000,    
     )
-    #assert old.to.net_level<dt.K5_N1
+
     new = old.copy()
+    #assert old.to.net_level<dt.K5_N1  
+    if new.to.net_level>=dt.K5_N1 and  new.to.net_level <= dt.K5_N6:  
+        for i in range(6):
+            new.ehn.dst_addr = new.to.dst_addr;
+            new.ehn.src_addr = new.to.src_addr;
+            new.esbs[pid].bodys[i] = id(ehn)
+    
+    #new.current=new.esbs[pid].head
+    # memcpy
+    #new.esbs[pid].bodys[new.esbs[pid].head:new.esbs[pid].head+s_len] = new.s_bufs[new.esbs[pid].head:new.esbs[pid].head+s_len]
+    print "*****esbesb*******"
+    #print new.esbs[pid].head
+
     new.esbs[pid].primitive=dt.K5_SEND
     new.esbs[pid].service=service 
     new.esbs[pid].head=old.to.net_level
@@ -1172,7 +1185,6 @@ def k5_wait(old,pid,w_len):
     )
     new = old.copy()
     new.esbs[pid].primitive=dt.K5_WAIT
-    new.esbs[pid].src_port=pid
     new.esbs[pid].dst_port=old.current
     return cond,util.If(cond,new,old)
 
@@ -1187,6 +1199,78 @@ def k5_call(old,pid,service,c_len):
     new.esbs[pid].src_port=old.to.src_port
     new.esbs[pid].dst_port=old.to.dst_port
     return cond,util.If(cond,new,old)
+
+def kk_send(old,pid,service,s_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+        is_service_valid(service),
+        #old.to.net_level >= dt.K5_N1,
+        #old.to.net_level <= dt.K5_N6,
+        is_s_len_valid(s_len),
+        #old.current < 500,
+        #pid < 6000,    
+    )
+
+    new = old.copy()
+    #assert old.to.net_level<dt.K5_N1  
+    if new.to.net_level>=dt.K5_N1 and  new.to.net_level <= dt.K5_N6:  
+        for i in range(6):
+            new.ehn.dst_addr = new.to.dst_addr;
+            new.ehn.src_addr = new.to.src_addr;
+            new.esbs[pid].bodys[i] = id(ehn)
+    
+    #new.current=new.esbs[pid].head
+    # memcpy
+    #new.esbs[pid].bodys[new.esbs[pid].head:new.esbs[pid].head+s_len] = new.s_bufs[new.esbs[pid].head:new.esbs[pid].head+s_len]
+    print "*****esbesb*******"
+    #print new.esbs[pid].head
+
+    new.esbs[pid].primitive=dt.K5_SEND
+    new.esbs[pid].service=service 
+    new.esbs[pid].head=old.to.net_level
+    new.esbs[pid].src_port=old.current
+    new.esbs[pid].dst_port=pid
+     
+
+    # new.procs[new.esbs[pid].ipc_to].ipc_from = old.current
+    # new.procs[new.esbs[pid].ipc_to].ipc_val = val
+
+    return cond,util.If(cond,new,old)
+
+
+def kk_reply(old,pid,ack_err,s_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+
+    )
+    new = old.copy()
+    new.esbs[pid].primitive=dt.K5_REPLY
+    new.esbs[pid].src_port=old.current
+    new.esbs[pid].dst_port=pid
+    #new.esbs[pid].head
+    return cond,util.If(cond,new,old)
+
+def kk_wait(old,pid,w_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+    )
+    new = old.copy()
+    new.esbs[pid].primitive=dt.K5_WAIT
+    new.esbs[pid].dst_port=old.current
+    return cond,util.If(cond,new,old)
+
+def kk_call(old,pid,service,c_len):
+    cond = z3.And(
+        is_pid_valid(pid),
+        is_service_valid(service),
+    )
+    new = old.copy()
+    #new.esbs[pid].primitive=dt.K5_CALL
+
+    new.esbs[pid].src_port=old.to.src_port
+    new.esbs[pid].dst_port=old.to.dst_port
+    return cond,util.If(cond,new,old)
+
 
 def sys_recv(old, pid, pn, fd):
     cond = z3.And(

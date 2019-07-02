@@ -213,6 +213,38 @@ class SyscallSpec(object):
 
         return (pid,service,c_len)
 
+    def kk_send(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        s_len = util.FreshBitVec('s_len', dt.tU4)
+        service=util.FreshBitVec('service',dt.tU2)
+        # pn = util.FreshBitVec('pn', dt.pn_t)
+        # size = util.FreshBitVec('size', dt.size_t)
+        # fd = util.FreshBitVec('fd', dt.fd_t)
+        #test = util.FreshBitVec('test', dt.test_t)
+        #esbid = util.FreshBitVec('esbid', dt.esbid_t)
+        # return (pid, val, pn, size, fd,test)
+        return (pid,service,s_len)
+
+    def kk_reply(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        ack_err = util.FreshBitVec('ack_err', dt.tI2)
+        s_len = util.FreshBitVec('s_len', dt.tU4)
+        return (pid,ack_err,s_len)
+
+    def kk_wait(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        w_len = util.FreshBitVec('s_len', dt.tU4)
+
+        return (pid,w_len)
+
+    def kk_call(self):
+        pid = util.FreshBitVec('pid', dt.pid_t)
+        service=util.FreshBitVec('service',dt.tU2)
+        c_len = util.FreshBitVec('c_len', dt.tU4)
+
+        return (pid,service,c_len)
+
+
     def sys_recv(self):
         pid = util.FreshBitVec('pid', dt.pid_t)
         pn = util.FreshBitVec('pn', dt.pn_t)

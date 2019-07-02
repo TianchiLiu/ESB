@@ -278,7 +278,12 @@ class tk5_net(Struct):
     cvt_level=Map(tU1,tU1)
     name_len=Map(tU4,tU4)
     dst_port=Map(tU4,tU4)
-    src_port=Map(tU4,tU4)
+    src_port=Map(tU4,tU4)  
+
+class tk5_ehn(Struct):
+    dst_addr=Map(tU4,tU4)
+    src_addr=Map(tU4,tU4)
+
 class s_buf(Struct):
     """docstring for s_buf"""
     value = Map(tU4,tU4)
@@ -317,7 +322,10 @@ class KernelState(BaseStruct):
 
     procs = Proc()
     esbs=Esb()
+    from_=tk5_net()
     to=tk5_net()
+
+    ehn = tk5_ehn()
     s_bufs = s_buf()
     pages = Page()
     dmapages = DMAPage()
